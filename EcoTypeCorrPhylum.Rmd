@@ -1,0 +1,301 @@
+---
+title: "Ben_Linear_Regression"
+author: "TJ"
+date: "10/14/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+# Libraries
+```{r, include=FALSE}
+library(tidyverse)
+library(data.table)
+library(ape)
+library(vegan)
+library(ggvegan)
+library(psych)
+library(grid)
+library(gridExtra)
+library(RColorBrewer)
+library(cowplot)
+library(car)
+```
+# First we need to load in the data
+```{r}
+#Summer data
+top100phyvSum <- read.csv("data/NewSumWinData/POWOW_RawCounts_EcotypePhyla_Summer.csv") %>% 
+  column_to_rownames(., var = "Sample") %>% 
+  subset(., select = eMED4:Verrucomicrobia)
+top100phyvSum.hell <- decostand(top100phyvSum, "hellinger") #Preforming a hellinger transfermation
+
+#Winter data
+top100phyvWin <- read.csv("data/NewSumWinData/POWOW_RawCounts_EcotypePhyla_Winter.csv") %>% 
+  column_to_rownames(., var = "Sample") %>% 
+  subset(., select = eMED4:Verrucomicrobia)
+top100phyvWin.hell <- decostand(top100phyvWin, "hellinger") #Preforming a hellinger transfermation
+```
+
+
+# Summer analysis
+
+### Now I want to evaluate the correlations between eMIT9312 and the top100 phylum
+```{r}
+eMIT9312lm_Sum_Intersept <- lm(eMIT9312 ~ 1, data = top100phyvSum.hell) #First we will define the intersept
+eMIT9312lm_Sum <- lm(eMIT9312 ~  Chloroflexi + Cyanobacteria + Deinococcus.Thermus + Euryarchaeota +
+  Firmicutes + Fusobacteria +  Gemmatimonadetes + Gracilibacteria + 
+  Lentisphaerae +  Marinimicrobia_SAR406_clade + PAUC34f +  Planctomycetes + 
+  Proteobacteria + SHA.109 +  Thaumarchaeota + Verrucomicrobia, data = top100phyvSum.hell) #Now I will con
+```
+
+```{r}
+vif(eMIT9312lm_Sum)
+```
+
+```{r}
+eMIT9312lm_Sum_both <- step(eMIT9312lm_Sum_Intersept, direction='both', scope=formula(eMIT9312lm_Sum), trace=0)#Preforming a stepwise in both directions to find the best model
+```
+
+```{r}
+eMIT9312lm_Sum_both$anova
+```
+
+```{r}
+eMIT9312lm_Sum_both$coefficients
+```
+
+```{r}
+summary(eMIT9312lm_Sum_both)
+```
+When comparing eMIT9312 against the Phylum in the summer samples, we found this ecotype has significiant relationships with Proteobacteria (p < .005) and Deinococcus-Thermus (p < .05). Specifically we found a 0.4% decrease (± 0.11) in eMIT9312 abundance for every 1% increase in Proteobacteria and a 10% increase (± 4.6) in eMIT9312 abundance for every 1% increase in Deinococcus-Thermus abundance. Though we saw a decrease of .66 in eMIT9312 for every 1% increase in Planctomycetes, this decrease was not statistically significant (p > .05).
+
+
+```{r}
+avPlots(eMIT9312lm_Sum_both)
+
+```
+
+
+### Now I want to evaluate the correlations between eMIT9312 and the top100 phylum
+```{r}
+eNATL2Alm_Sum_Intersept <- lm(eNATL2A ~ 1, data = top100phyvSum.hell) #First we will define the intersept
+eNATL2Alm_Sum <- lm(eNATL2A ~  Chloroflexi + Cyanobacteria + Deinococcus.Thermus + Euryarchaeota +
+  Firmicutes + Fusobacteria +  Gemmatimonadetes + Gracilibacteria + 
+  Lentisphaerae +  Marinimicrobia_SAR406_clade + PAUC34f +  Planctomycetes + 
+  Proteobacteria + SHA.109 +  Thaumarchaeota + Verrucomicrobia, data = top100phyvSum.hell) #Now I will con
+```
+
+
+#Preforming a stepwise in both directions to find the best model
+```{r}
+eNATL2Alm_Sum_both <- step(eNATL2Alm_Sum_Intersept, direction='both', scope=formula(eNATL2Alm_Sum), trace=0)
+```
+
+```{r}
+eNATL2Alm_Sum_both$anova
+```
+
+```{r}
+eNATL2Alm_Sum_both$coefficients
+```
+
+```{r}
+summary(eNATL2Alm_Sum_both)
+```
+There is no sig correlation for eNATL2A
+
+### Now I want to evaluate the correlations between eMIT9312 and the top100 phylum
+```{r}
+eMIT9313lm_Sum_Intersept <- lm(eMIT9313 ~ 1, data = top100phyvSum.hell) #First we will define the intersept
+eMIT9313lm_Sum <- lm(eMIT9313 ~  Chloroflexi + Cyanobacteria + Deinococcus.Thermus + Euryarchaeota +
+  Firmicutes + Fusobacteria +  Gemmatimonadetes + Gracilibacteria + 
+  Lentisphaerae +  Marinimicrobia_SAR406_clade + PAUC34f +  Planctomycetes + 
+  Proteobacteria + SHA.109 +  Thaumarchaeota + Verrucomicrobia, data = top100phyvSum.hell) #Now I will con
+```
+
+```{r}
+#Preforming a stepwise in both directions to find the best model
+eMIT9313lm_Sum_both <- step(eMIT9313lm_Sum_Intersept, direction='both', scope=formula(eMIT9313lm_Sum), trace=0)
+```
+
+```{r}
+eMIT9313lm_Sum_both$anova
+```
+
+```{r}
+eMIT9313lm_Sum_both$coefficients
+```
+
+```{r}
+summary(eMIT9313lm_Sum_both)
+```
+Only the intercept is sig here
+
+
+### Now I want to evaluate the correlations between eMIT9312 and the top100 phylum
+```{r}
+eMED4lm_Sum_Intersept <- lm(eMED4 ~ 1, data = top100phyvSum.hell) #First we will define the intersept
+eMED4lm_Sum <- lm(eMED4 ~  Chloroflexi + Cyanobacteria + Deinococcus.Thermus + Euryarchaeota +
+  Firmicutes + Fusobacteria +  Gemmatimonadetes + Gracilibacteria + 
+  Lentisphaerae +  Marinimicrobia_SAR406_clade + PAUC34f +  Planctomycetes + 
+  Proteobacteria + SHA.109 +  Thaumarchaeota + Verrucomicrobia, data = top100phyvSum.hell) #Now I will con
+```
+
+```{r}
+#Preforming a stepwise in both directions to find the best model
+eMED4lm_Sum_both <- step(eMED4lm_Sum_Intersept, direction='both', scope=formula(eMED4lm_Sum), trace=0)
+```
+
+```{r}
+eMED4lm_Sum_both$anova
+```
+
+```{r}
+eMED4lm_Sum_both$coefficients
+```
+
+```{r}
+summary(eMED4lm_Sum_both)
+```
+When comparing eMED4 against the Phylum in the summary samples, we found this ecotype has significiant relationships with Proteobacteria (p < .001) and Deinococcus-Thermus (p < .05). Specifically we found a 1.1% decrease (± 0.14) in eMED4 abundance for every 1% increase in Proteobacteria and a 12% decrease (± 5.6) in eMED4 abundance for every 1% increase in Deinococcus-Thermus abundance. Though we saw a decrease of .4% in eMED4 for every 1% increase in Euryarchaeota, this decrease was not statistically significant (p > .05).
+
+```{r}
+
+avPlots(eMED4lm_Sum_both)
+
+```
+
+
+# Winter analysis
+### Now I want to evaluate the correlations between eMIT9312 and the top100 phylum
+```{r}
+eMIT9312lm_Win_Intersept <- lm(eMIT9312 ~ 1, data = top100phyvWin.hell) #First we will define the intersept
+eMIT9312lm_Win <- lm(eMIT9312 ~  Chloroflexi + Cyanobacteria + Deinococcus.Thermus + Euryarchaeota +
+                       Firmicutes + Fusobacteria +  Gemmatimonadetes + Gracilibacteria + 
+                       Lentisphaerae +  Marinimicrobia_SAR406_clade + PAUC34f +  Planctomycetes + 
+                       Proteobacteria + SHA.109 +  Thaumarchaeota + Verrucomicrobia, data = top100phyvWin.hell) #Now I will con
+```
+
+```{r}
+vif(eMIT9312lm_Win)
+```
+
+```{r}
+eMIT9312lm_Win_both <- step(eMIT9312lm_Win_Intersept, direction='both', scope=formula(eMIT9312lm_Win), trace=0)#Preforming a stepwise in both directions to find the best model
+```
+
+```{r}
+eMIT9312lm_Win_both$anova
+```
+
+```{r}
+eMIT9312lm_Win_both$coefficients
+```
+
+```{r}
+summary(eMIT9312lm_Win_both)
+```
+When comparing eMIT9312 against the Phylum in the winter samples, we found this ecotype has significant relationships with Proteobacteria (p < .001) and Chloroflexi (p < .001). Specifically we found a 1% decrease (± 0.2) in eMIT9312 abundance for every 1% increase in Proteobacteria and a 2% decrease (± .8) in eMIT9312 abundance for every 1% increase in Chloroflexi abundance. 
+
+```{r}
+avPlots(eMIT9312lm_Win_both)
+
+```
+
+### Now I want to evaluate the correlations between eMIT9312 and the top100 phylum
+```{r}
+eNATL2Alm_Win_Intersept <- lm(eNATL2A ~ 1, data = top100phyvWin.hell) #First we will define the intersept
+eNATL2Alm_Win <- lm(eNATL2A ~  Chloroflexi + Cyanobacteria + Deinococcus.Thermus + Euryarchaeota +
+                      Firmicutes + Fusobacteria +  Gemmatimonadetes + Gracilibacteria + 
+                      Lentisphaerae +  Marinimicrobia_SAR406_clade + PAUC34f +  Planctomycetes + 
+                      Proteobacteria + SHA.109 +  Thaumarchaeota + Verrucomicrobia, data = top100phyvWin.hell) #Now I will con
+```
+
+```{r}
+#Preforming a stepwise in both directions to find the best model
+eNATL2Alm_Win_both <- step(eNATL2Alm_Win_Intersept, direction='both', scope=formula(eNATL2Alm_Win), trace=0)
+```
+
+```{r}
+eNATL2Alm_Win_both$anova
+```
+
+```{r}
+eNATL2Alm_Win_both$coefficients
+```
+
+```{r}
+summary(eNATL2Alm_Win_both)
+```
+When comparing eNATL2A against the Phylum in the winter samples, we found this ecotype has significant relationships with Lentisphaerae (p < .05), the uncultured phylum SHA.109 (p < .005), Gemmatimonadetes (p < .05), and  Chloroflexi (p < .05). Specifically we found a 3.4% increase (± 1.5) in eNATL2A abundance for every 1% increase in Lentisphaerae, a 15% decrease (± 5) in eNATL2A abundance for every 1% increase in SHA.109 abundance, a 7% (± 3) decrease in eNATL2A abundance for every 1% increase in Gemmatimonadetes, and a 2% increase in eNATL2A abundance for every 1% increase in Chloroflexi. While we found a .5% increase in eNATL2A for every 1% increase in Euryarchaeota, this was not statistically significant (p > .05)
+
+```{r}
+avPlots(eNATL2Alm_Win_both)
+
+```
+
+### Now I want to evaluate the correlations between eMIT9312 and the top100 phylum
+```{r}
+eMIT9313lm_Win_Intersept <- lm(eMIT9313 ~ 1, data = top100phyvWin.hell) #First we will define the intersept
+eMIT9313lm_Win <- lm(eMIT9313 ~  Chloroflexi + Cyanobacteria + Deinococcus.Thermus + Euryarchaeota +
+                       Firmicutes + Fusobacteria +  Gemmatimonadetes + Gracilibacteria + 
+                       Lentisphaerae +  Marinimicrobia_SAR406_clade + PAUC34f +  Planctomycetes + 
+                       Proteobacteria + SHA.109 +  Thaumarchaeota + Verrucomicrobia, data = top100phyvWin.hell) #Now I will con
+```
+
+```{r}
+#Preforming a stepwise in both directions to find the best model
+eMIT9313lm_Win_both <- step(eMIT9313lm_Win_Intersept, direction='both', scope=formula(eMIT9313lm_Win), trace=0)
+```
+
+```{r}
+eMIT9313lm_Win_both$anova
+```
+
+```{r}
+eMIT9313lm_Win_both$coefficients
+```
+
+```{r}
+summary(eMIT9313lm_Win_both)
+```
+
+When comparing eMIT9313 against the Phylum in the winter samples, we found this ecotype has significant relationships with Lentisphaerae (p < .05), the uncultured phylum Chloroflexi (p < .0005), Deinococcus-Thermus  (p < .01), Marinimicrobia_SAR406_clade (p < .005), and  Euryarchaeota (p < .05). Specifically we found a 1.5% increase (± .6) in eMIT9313 abundance for every 1% increase in Lentisphaerae, a 1.1% increase (± .25) in eMIT9313 abundance for every 1% increase in Chloroflexi abundance, a 3% (± 1) decrease in eMIT9313 abundance for every 1% increase in Deinococcus-Thermus, a 1.1% (± .33) decrease in  eMIT9313 abundance for every 1% increase in Marinimicrobia_SAR406_clade, and a .3% (± .13) increase  in eMIT9313 abundance for every 1% increase in Euryarchaeota. 
+```{r}
+avPlots(eMIT9313lm_Win_both)
+
+```
+
+### Now I want to evaluate the correlations between eMIT9312 and the top100 phylum
+```{r}
+eMED4lm_Win_Intersept <- lm(eMED4 ~ 1, data = top100phyvWin.hell) #First we will define the intersept
+eMED4lm_Win <- lm(eMED4 ~  Chloroflexi + Cyanobacteria + Deinococcus.Thermus + Euryarchaeota +
+                    Firmicutes + Fusobacteria +  Gemmatimonadetes + Gracilibacteria + 
+                    Lentisphaerae +  Marinimicrobia_SAR406_clade + PAUC34f +  Planctomycetes + 
+                    Proteobacteria + SHA.109 +  Thaumarchaeota + Verrucomicrobia, data = top100phyvWin.hell) #Now I will con
+```
+
+```{r}
+#Preforming a stepwise in both directions to find the best model
+eMED4lm_Win_both <- step(eMED4lm_Win_Intersept, direction='both', scope=formula(eMED4lm_Win), trace=0)
+```
+
+```{r}
+eMED4lm_Win_both$anova
+```
+
+```{r}
+eMED4lm_Win_both$coefficients
+```
+
+```{r}
+summary(eMED4lm_Win_both)
+```
+When comparing eMED4 against the Phylum in the winter samples, we found this ecotype has significant relationships with Proteobacteria (p < .05)
+
+
+Specifically we found a .6% decrease (± .1) in eMED4 abundance for every 1% increase in Proteobacteria. While we did find a .6% increase in eMED4 abundance for every 1% increase in Planctomycetes, this was not statistically significant (p > .05)
+```{r}
+
+avPlots(eMED4lm_Win_both)
+
+```
